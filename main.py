@@ -92,6 +92,7 @@ class main():
             self.count_rates()
             btc_now_price = float(self.btcturk_data['bid']) * \
                 float(self.account_data['bitcoin_available'])
+            print 'BTC now: ', btc_now_price
             if btc_now_price > self.revenue_sell_price:
                 self.sell_perm = true
             elif self.sell_perm:
