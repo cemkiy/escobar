@@ -14,7 +14,7 @@ class main():
         ask : buy price
         """
 
-        self._btcturk = Btcturk("api-key", "api-secret")
+        self._btcturk = Btcturk("56c0ce1cbf72a3538088f1d4", "hLpRanhnT+JP5MHVlnwtCGNbQ+ac6ajB")
         self.btcturk_data = self._btcturk.ticker()
         self.account_data = self._btcturk.balance()
 
@@ -23,16 +23,15 @@ class main():
         self.revenue_sell_price = 0
         self.loss_sell_price = 0
 
+        self.sell_perm = False
+
         self.yo = yopy.Yo('45f44dae-6dbb-4f2c-977c-3acb71a84432')
 
     def get_transactions(self):
-        control = False
         while True:
-            if control == True:
-                break
             try:
                 transactions = self._btcturk.transactions(limit=2)
-                control = True
+                break
             except Exception as e:
                 print e
         return transactions
@@ -58,7 +57,7 @@ class main():
         self.revenue_sell_price = out_of_my_pocket + (out_of_my_pocket / 100)
         print 'revenue sell price', self.revenue_sell_price
         self.loss_sell_price = out_of_my_pocket - (out_of_my_pocket / 100)
-        print 'loss sell price', self.loss_sell_price
+        # print 'loss sell price', self.loss_sell_price
 
     def out_of_my_pocket(self):
         total_money = 0
@@ -70,25 +69,20 @@ class main():
 
     def sell_btc(self):
         print 'sell btc'
-        control = False
         while True:
-            if control == True:
-                break
             try:
                 self._btcturk.sell_with_market_order(self.account_data['bitcoin_available'])
-                control = True
+                break
             except Exception as e:
                 print e
 
     def buy_btc(self):
         print 'buy btc'
-        control = False
+        self.sell_perm = False
         while True:
-            if control == True:
-                break
             try:
                 self._btcturk.buy_with_market_order(self.account_data['money_available'])
-                control = True
+                break
             except Exception as e:
                 print e
 
@@ -99,13 +93,11 @@ class main():
             btc_now_price = float(self.btcturk_data['bid']) * \
                 float(self.account_data['bitcoin_available'])
             if btc_now_price > self.revenue_sell_price:
-                self.yo.yoall('https://www.youtube.com/watch?v=pVerKkP_vYg')
-                if self.guess_what == False:
-                    self.yo.yoall('https://www.youtube.com/watch?v=lqn8L3JIALY')
-                    self.sell_btc()
-            elif btc_now_price <= self.loss_sell_price:
-                # self.sell_btc()
-                self.yo.yoall('https://www.youtube.com/watch?v=dH05wYoQj9k')
+                self.sell_perm = true
+            elif self.sell_perm:
+                self.yo.yoall('https://www.youtube.com/watch?v=lqn8L3JIALY')
+                self.sell_btc()
+
         else:
             print 'TRY transaction'
             if self.guess_what():
@@ -113,14 +105,12 @@ class main():
                 self.yo.yoall()
 
     def update(self):
-        control = False
         while True:
-            if control:
-                break
             try:
                 self.btcturk_data = self._btcturk.ticker()
                 self.account_data = self._btcturk.balance()
                 self.btcturk_transactions = self.get_transactions()
+                break
             except Exception as e:
                 print e
 
@@ -132,4 +122,4 @@ run = main()
 while True:
     run.update()
     run.plata_o_plomo()
-    time.sleep(6000)
+    time.sleep(300)
