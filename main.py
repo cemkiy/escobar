@@ -22,6 +22,7 @@ class main():
 
         self.revenue_sell_price = 0
         self.loss_sell_price = 0
+        self.salable_price = 0
 
         self.sell_perm = False
 
@@ -79,6 +80,7 @@ class main():
     def buy_btc(self):
         print 'buy btc'
         self.sell_perm = False
+        self.salable_price = 0
         while True:
             try:
                 self._btcturk.buy_with_market_order(self.account_data['money_available'])
@@ -93,12 +95,12 @@ class main():
             btc_now_price = float(self.btcturk_data['bid']) * \
                 float(self.account_data['bitcoin_available'])
             print 'BTC now: ', btc_now_price
-            if btc_now_price > self.revenue_sell_price:
-                self.sell_perm = true
-            elif self.sell_perm:
+            if self.sell_perm and btc_now_price < self.salable_price:
                 self.yo.yoall('https://www.youtube.com/watch?v=lqn8L3JIALY')
                 self.sell_btc()
-
+            if btc_now_price > self.revenue_sell_price:
+                self.sell_perm = true
+                self.salable_price = btc_now_price
         else:
             print 'TRY transaction'
             if self.guess_what():
