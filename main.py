@@ -99,7 +99,7 @@ class main():
                 self.yo.yoall('https://www.youtube.com/watch?v=lqn8L3JIALY')
                 self.sell_btc()
             if btc_now_price > self.revenue_sell_price:
-                self.sell_perm = true
+                self.sell_perm = True
                 self.salable_price = btc_now_price
         else:
             print 'TRY transaction'
