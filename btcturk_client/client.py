@@ -74,6 +74,11 @@ class Btcturk(object):
 
         return response.json()
 
+    def ohcl_data(self, last=None):
+        response = requests.get(self._generate_url("ohlcdata", {"last": last}), verify=False)
+
+        return response.json()
+
     def orderbook(self):
         response = requests.get(self._generate_url("orderbook"), verify=False)
 

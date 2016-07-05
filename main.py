@@ -32,15 +32,16 @@ class main():
     def get_transactions(self):
         while True:
             try:
-                transactions = self._btcturk.transactions(limit=4)
+                transactions = self._btcturk.transactions(limit=10)
                 break
             except Exception as e:
                 print e
         return transactions
 
-    def guess_what(self, rate):
+    def guess_what(self, rate, volume):
         totality_guess = 0
-        if ((float(self.btcturk_data['ask']) - float(self.btcturk_data['open'])) * 100) / float(self.btcturk_data['open']) > rate:
+        if ((float(self.btcturk_data['ask']) - float(self.btcturk_data['open'])) * 100) / float(self.btcturk_data['open']) > rate and
+            float(self.btcturk_data['volume']) > 500:
             if self.btcturk_data['open'] <= self.btcturk_data['ask']:
                 totality_guess += 1
             if self.btcturk_data['open'] <= self.btcturk_data['average']:
@@ -55,7 +56,7 @@ class main():
 
     def count_rates(self):
         self.count_out_of_my_pocket()
-        self.revenue_sell_price = self.out_of_my_pocket + (self.out_of_my_pocket / 100)
+        self.revenue_sell_price = self.out_of_my_pocket + ((self.out_of_my_pocket / 100) *10)
         print 'revenue sell price', self.revenue_sell_price
         self.loss_alarm = self.out_of_my_pocket - ((self.out_of_my_pocket / 100)*20)
         print 'alarm price', self.loss_alarm
@@ -92,14 +93,14 @@ class main():
                 print e
 
     def plata_o_plomo(self):
-        if float(self.account_data['bitcoin_available']) > 0:
+        if float(self.account_data['bitcoin_available']) > 0 and float(self.account_data['money_available']) == 0:
             print 'BTC transaction'
             self.count_rates()
             btc_now_price = float(self.btcturk_data['bid']) * \
                 float(self.account_data['bitcoin_available'])
             print 'BTC now: ', btc_now_price
             if self.sell_perm and btc_now_price < self.salable_price and btc_now_price > self.out_of_my_pocket:
-                if self.guess_what(rate=2) == False:
+                if self.guess_what(rate=2, volume=500) == False:
                     self.yo.youser(username='CEMKY', link='https://www.youtube.com/watch?v=XXjf0VG9ORk')
                     self.sell_btc()
             if btc_now_price > self.revenue_sell_price:
@@ -107,9 +108,9 @@ class main():
                 self.salable_price = btc_now_price
             if btc_now_price <= self.loss_alarm:
                 self.yo.youser(username='CEMKY', location="41.0256377,28.9719802")
-        else:
+        elif float(self.account_data['bitcoin_available']) == 0 and float(self.account_data['money_available']) > 0:
             print 'TRY transaction'
-            if self.guess_what(rate=1.04):
+            if self.guess_what(rate=1.04, volume=500):
                 self.buy_btc()
                 self.yo.youser(username='CEMKY')
 
