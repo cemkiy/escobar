@@ -14,7 +14,7 @@ class main():
         ask : buy price
         """
 
-        self._btcturk = Btcturk("api-key", "api-secret")
+        self._btcturk = Btcturk("577bc0a2bf72a31f6c2e044c", "dxYH/xy/sgrztbsi1lwqb7U7MVESm5xw")
         self.btcturk_data = self._btcturk.ticker()
         self.account_data = self._btcturk.balance()
 
@@ -40,8 +40,7 @@ class main():
 
     def guess_what(self, rate, volume):
         totality_guess = 0
-        if ((float(self.btcturk_data['ask']) - float(self.btcturk_data['open'])) * 100) / float(self.btcturk_data['open']) > rate and
-            float(self.btcturk_data['volume']) > 500:
+        if ((float(self.btcturk_data['ask']) - float(self.btcturk_data['open'])) * 100) / float(self.btcturk_data['open']) > rate and float(self.btcturk_data['volume']) > 500:
             if self.btcturk_data['open'] <= self.btcturk_data['ask']:
                 totality_guess += 1
             if self.btcturk_data['open'] <= self.btcturk_data['average']:
@@ -135,5 +134,4 @@ while True:
         run.plata_o_plomo()
         time.sleep(120)
     except Exception as e:
-        self.yo.youser(username='CEMKY', link="https://github.com/cemkiy/escobar")
         print e
