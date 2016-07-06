@@ -55,7 +55,7 @@ class main():
 
     def count_rates(self):
         self.count_out_of_my_pocket()
-        self.revenue_sell_price = self.out_of_my_pocket + ((self.out_of_my_pocket / 100) *10)
+        self.revenue_sell_price = self.out_of_my_pocket + ((self.out_of_my_pocket / 100) *3)
         print 'revenue sell price', self.revenue_sell_price
         self.loss_alarm = self.out_of_my_pocket - ((self.out_of_my_pocket / 100)*20)
         print 'alarm price', self.loss_alarm
