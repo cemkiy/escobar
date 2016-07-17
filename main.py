@@ -36,6 +36,7 @@ class main():
                 break
             except Exception as e:
                 print e
+                time.sleep(50)
         return transactions
 
     def guess_what(self, rate, volume):
@@ -78,6 +79,7 @@ class main():
                 time.sleep(600)
                 break
             except Exception as e:
+                time.sleep(50)
                 print e
 
     def buy_btc(self):
@@ -89,6 +91,7 @@ class main():
                 self._btcturk.buy_with_market_order(self.account_data['money_available'])
                 break
             except Exception as e:
+                time.sleep(50)
                 print e
 
     def plata_o_plomo(self):
@@ -121,6 +124,7 @@ class main():
                 self.btcturk_transactions = self.get_transactions()
                 break
             except Exception as e:
+                time.sleep(50)
                 print e
 
     def cron_try(self):
