@@ -14,7 +14,7 @@ class main():
         ask : buy price
         """
 
-        self._btcturk = Btcturk("577bc0a2bf72a31f6c2e044c", "dxYH/xy/sgrztbsi1lwqb7U7MVESm5xw")
+        self._btcturk = Btcturk("api-key", "api-secret")
         self.btcturk_data = self._btcturk.ticker()
         self.account_data = self._btcturk.balance()
 
@@ -27,7 +27,7 @@ class main():
 
         self.sell_perm = False
 
-        self.yo = yopy.Yo('45f44dae-6dbb-4f2c-977c-3acb71a84432')
+        self.yo = yopy.Yo('yo-api-key')
 
     def get_transactions(self):
         while True:
@@ -103,18 +103,18 @@ class main():
             print 'BTC now: ', btc_now_price
             if self.sell_perm and btc_now_price < self.salable_price and btc_now_price > self.out_of_my_pocket:
                 if self.guess_what(rate=2, volume=500) == False:
-                    self.yo.youser(username='CEMKY', link='https://www.youtube.com/watch?v=XXjf0VG9ORk')
+                    self.yo.youser(username='yo-user-name', link='https://www.youtube.com/watch?v=XXjf0VG9ORk')
                     self.sell_btc()
             if btc_now_price > self.revenue_sell_price:
                 self.sell_perm = True
                 self.salable_price = btc_now_price
             if btc_now_price <= self.loss_alarm:
-                self.yo.youser(username='CEMKY', location="41.0256377,28.9719802")
+                self.yo.youser(username='yo-user-name', location="41.0256377,28.9719802")
         elif float(self.account_data['bitcoin_available']) == 0 and float(self.account_data['money_available']) > 0:
             print 'TRY transaction'
             if self.guess_what(rate=1.04, volume=500):
                 self.buy_btc()
-                self.yo.youser(username='CEMKY')
+                self.yo.youser(username='yo-user-name')
 
     def update(self):
         while True:
@@ -128,7 +128,7 @@ class main():
                 print e
 
     def cron_try(self):
-        self.yo.youser(username='CEMKY', link="https://github.com/cemkiy/escobar")
+        self.yo.youser(username='yo-user-name', link="https://github.com/cemkiy/escobar")
 
 
 run = main()
