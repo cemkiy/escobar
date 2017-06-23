@@ -9,10 +9,15 @@ class Stats():
         self.renv = real_environment.RealEnvironment()
         self.symbol = self.renv.get_env_or_default("coin_symbol", "btcusd")
         self.client = Client()
+        self.utils = Utils()
         self.ticker = self.client.ticker(self.symbol)
         self.today = self.client.today(self.symbol)
         self.stats = self.client.stats(self.symbol)
-        self.utils = Utils()
+
+    def update_market_info(self):
+        self.ticker = self.client.ticker(self.symbol)
+        self.today = self.client.today(self.symbol)
+        self.stats = self.client.stats(self.symbol)
 
     def process_volume_stats(self):
         daily_volume = self.stats[0].volume
@@ -31,11 +36,11 @@ class Stats():
             daily_trend = True
 
         if weekly_trend and daily_trend:
-            return 'power'
+            return 1
         elif weekly_trend or daily_trend:
-            return 'normal'
+            return 0
         else:
-            return 'weak'
+            return -1
 
     def process_from_the_bottom_to_the_top(self):
         max_price = self.today.high
@@ -47,18 +52,18 @@ class Stats():
             max_price - self.ticker.last_price, max_price)
 
         if increment_percent > decrement_percent:
-            return 'power'
+            return 1
         elif increment_percent == decrement_percent:
-            return 'normal'
+            return 0
         else:
-            return 'weak'
+            return -1
 
     def process_week(self):
         weekno = datetime.datetime.today().weekday()
 
         if weekno < 5:
             # weekday
-            return 'power'
+            return 0
         else:
-            # weak
-            return 'weak'
+            # weakend
+            return 1
