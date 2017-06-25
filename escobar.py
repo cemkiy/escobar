@@ -1,24 +1,24 @@
 from stats import Stats
+import utils
 from real_environment import real_environment
 import yopy
 import json
 
 
-def update_weights(weight):
+def update_weights(weight, stats):
+    renv = real_environment.RealEnvironment()
     try:
-        with open('prophecy_' + renv.get_env_or_default("coin_symbol", "") +
-                  '.json') as data_file:
-            prophecy = json.load(data_file)
+        prophecy = utils.read_file(
+            'prophecy_' + renv.get_env_or_default("coin_symbol", "") + '.json')
     except:
         print("No found prophecy data.")
         return
 
     try:
-        with open('ticker_' + renv.get_env_or_default("coin_symbol", "") +
-                  '.json') as data_file:
-            ticker = json.load(data_file)
+        ticker = utils.read_file(
+            'ticker_' + renv.get_env_or_default("coin_symbol", "") + '.json')
     except:
-        print("No found prophecy data.")
+        print("No found prophecy ticker.")
         return
 
     wrong_weights = []
@@ -48,6 +48,7 @@ def update_weights(weight):
 
     will_be_distributed_points_per_weight = (
         len(wrong_weights) * 2) / (3 - len(wrong_weights))
+
     if "volume" not in wrong_weights:
         weight["volume"] += will_be_distributed_points_per_weight
     if "ftbttt" not in wrong_weights:
@@ -55,9 +56,8 @@ def update_weights(weight):
     if "week" not in wrong_weights:
         weight["week"] += will_be_distributed_points_per_weight
 
-    with open('weight_' + renv.get_env_or_default("coin_symbol", "") +
-              '.json', 'w') as outfile:
-        json.dump(weight, outfile)
+    utils.write_file(
+        'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', weight)
 
 
 def escobar():
@@ -66,34 +66,30 @@ def escobar():
     yo_low = yopy.Yo(renv.get_env_or_default("notify_low_yo_api_key", ""))
     stats = Stats()
 
-    with open('ticker_' + renv.get_env_or_default("coin_symbol", "") +
-              '.json', 'w') as outfile:
-        json.dump(stats.ticker, outfile)
+    utils.write_file(
+        'ticker_' + renv.get_env_or_default("coin_symbol", "") + '.json', stats.ticker)
 
     weight = {}
     try:
-        with open('weight_' + renv.get_env_or_default("coin_symbol", "") +
-                  '.json') as data_file:
-            weight = json.load(data_file)
+        weight = utils.read_file(
+            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json')
     except FileNotFoundError:
-        with open('weight_' + renv.get_env_or_default("coin_symbol", "") +
-                  '.json', 'w') as outfile:
-            data = {}
-            data["volume"] = 100 / 3
-            data["ftbttt"] = 100 / 3
-            data["week"] = 100 / 3
-            json.dump(data, outfile)
+        data = {}
+        data["volume"] = 100 / 3
+        data["ftbttt"] = 100 / 3
+        data["week"] = 100 / 3
+        utils.write_file(
+            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', data)
 
-    update_weights(weight)
+    update_weights(weight, stats)
 
     prophecy = {}
     prophecy["volume"] = stats.process_volume_stats()
     prophecy["ftbttt"] = stats.process_from_the_bottom_to_the_top()
     prophecy["week"] = stats.process_week()
 
-    with open('prophecy_' + renv.get_env_or_default("coin_symbol", "") +
-              '.json', 'w') as outfile:
-        json.dump(prophecy, outfile)
+    utils.write_file(
+        'prophecy_' + renv.get_env_or_default("coin_symbol", "") + '.json', prophecy)
 
     result_turn = prophecy["volume"] * weight["volume"] + \
         prophecy["ftbttt"] * weight["ftbttt"] + \
@@ -103,3 +99,6 @@ def escobar():
         yo_high.youser(renv.get_env_or_default("notify_yo_username", ""))
     elif result_turn < 0:
         yo_low.youser(renv.get_env_or_default("notify_yo_username", ""))
+
+
+escobar()
