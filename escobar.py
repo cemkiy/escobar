@@ -74,12 +74,12 @@ def escobar():
         weight = utils.read_file(
             'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json')
     except FileNotFoundError:
-        data = {}
-        data["volume"] = 100 / 3
-        data["ftbttt"] = 100 / 3
-        data["week"] = 100 / 3
+        weight = {}
+        weight["volume"] = 100 / 3
+        weight["ftbttt"] = 100 / 3
+        weight["week"] = 100 / 3
         utils.write_file(
-            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', data)
+            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', weight)
 
     update_weights(weight, stats)
 
