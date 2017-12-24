@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 """
 A simple Yo! API for python.
+
 As of now, you can:
 	1.Get the number of subscribers
 	2.Send a Yo! to all subscribers
 	3.Send a Yo! to a specific user
+
 YoPy requires a Yo! API access token. You can get one by registering at http://dev.justyo.co/
+
 YoPy requires the module requests. Get it from http://docs.python-requests.org/
+
 Parth Dhar
 2014
 """

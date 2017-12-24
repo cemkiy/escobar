@@ -1,0 +1,2 @@
+bitfinex==0.2.6
+real_environment==1.0
