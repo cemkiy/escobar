@@ -1,2 +1,2 @@
-bitfinex==0.2.6
+coinmarketcap==4.2.1
 real_environment==1.0

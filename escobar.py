@@ -1,104 +1,76 @@
-from stats import Stats
-import utils
+from forecast import Forecast
 from real_environment import real_environment
 import yopy
 import json
+import utils
 
+def update_weights():
 
-def update_weights(weight, stats):
-    renv = real_environment.RealEnvironment()
-    try:
-        prophecy = utils.read_file(
-            'prophecy_' + renv.get_env_or_default("coin_symbol", "") + '.json')
-    except:
-        print("No found prophecy data.")
-        return
+# environment
+renv = real_environment.RealEnvironment()
 
-    try:
-        ticker = utils.read_file(
-            'ticker_' + renv.get_env_or_default("coin_symbol", "") + '.json')
-    except:
-        print("No found prophecy ticker.")
-        return
+# register your func
+functions_to_be_run = {
+    'trend_by_perc': Forecast.trend_by_perc,
+    'trend_by_weekdays': Forecast.trend_by_weekdays
+}
 
-    wrong_weights = []
-
-    if stats.ticker["last_price"] >= ticker["last_price"]:
-        # high
-        if prophecy["volume"] == -1:
-            weight["volume"] -= 2
-            wrong_weights.append("volume")
-        if prophecy["ftbttt"] == -1:
-            weight["ftbttt"] -= 2
-            wrong_weights.append("ftbttt")
-        if prophecy["week"] == -1:
-            weight["week"] -= 2
-            wrong_weights.append("week")
-    elif stats.ticker["last_price"] < ticker["last_price"]:
-        # low
-        if prophecy["volume"] == 1:
-            weight["volume"] -= 2
-            wrong_weights.append("volume")
-        if prophecy["ftbttt"] == 1:
-            weight["ftbttt"] -= 2
-            wrong_weights.append("ftbttt")
-        if prophecy["week"] == 1:
-            weight["week"] -= 2
-            wrong_weights.append("week")
-
-    will_be_distributed_points_per_weight = (
-        len(wrong_weights) * 2) / (3 - len(wrong_weights))
-
-    if "volume" not in wrong_weights:
-        weight["volume"] += will_be_distributed_points_per_weight
-    if "ftbttt" not in wrong_weights:
-        weight["ftbttt"] += will_be_distributed_points_per_weight
-    if "week" not in wrong_weights:
-        weight["week"] += will_be_distributed_points_per_weight
-
-    utils.write_file(
-        'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', weight)
-
-
-def escobar():
-    renv = real_environment.RealEnvironment()
-    yo_high = yopy.Yo(renv.get_env_or_default("notify_high_yo_api_key", ""))
-    yo_low = yopy.Yo(renv.get_env_or_default("notify_low_yo_api_key", ""))
-    stats = Stats()
-
-    utils.write_file(
-        'ticker_' + renv.get_env_or_default("coin_symbol", "") + '.json', stats.ticker)
-
+try:
+    weight = utils.read_file(
+        'weight_' + renv.get_env_or_default("coin_name", "bitcoin") + '.json')
+except FileNotFoundError:
     weight = {}
-    try:
-        weight = utils.read_file(
-            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json')
-    except FileNotFoundError:
-        weight = {}
-        weight["volume"] = 100 / 3
-        weight["ftbttt"] = 100 / 3
-        weight["week"] = 100 / 3
-        utils.write_file(
-            'weight_' + renv.get_env_or_default("coin_symbol", "") + '.json', weight)
-
-    update_weights(weight, stats)
-
-    prophecy = {}
-    prophecy["volume"] = stats.process_volume_stats()
-    prophecy["ftbttt"] = stats.process_from_the_bottom_to_the_top()
-    prophecy["week"] = stats.process_week()
-
+    for key, value in functions_to_be_run.items():
+        weight[key]=100/len(functions_to_be_run)
     utils.write_file(
-        'prophecy_' + renv.get_env_or_default("coin_symbol", "") + '.json', prophecy)
+        'weight_' + renv.get_env_or_default("coin_name", "bitcoin") + '.json', weight)
 
-    result_turn = prophecy["volume"] * weight["volume"] + \
-        prophecy["ftbttt"] * weight["ftbttt"] + \
-        prophecy["week"] * weight["week"]
+try:
+    prophecy = utils.read_file(
+        'prophecy_' + renv.get_env_or_default("coin_name", "bitcoin") + '.json')
+    successful_funcs = []
+    unsuccessful = []
+    for key, value in functions_to_be_run.items():
+        if prophecy["price"] > Forecast.ticker[renv.get_env_or_default("currency", "USD").lower()]: #falls
+            if prophecy[key] == -1:
+                successful_funcs.append(key)
+            else:
+                unsuccessful.append(key)
+        elif prophecy["price"] == Forecast.ticker[renv.get_env_or_default("currency", "USD").lower()]: #static
+            if prophecy[key] == 0:
+                successful_funcs.append(key)
+            else:
+                unsuccessful.append(key)
+        elif prophecy["price"] < Forecast.ticker[renv.get_env_or_default("currency", "USD").lower()]: #rises
+            if prophecy[key] == 1:
+                successful_funcs.append(key)
+            else:
+                unsuccessful.append(key)
+    new_weight = {}
+    will_give_points_per_func = (len(unsuccessful)*2)/len(successful_funcs)
+    for f in successful_funcs:
+        new_weight[f] = weight[f]+will_give_points
+    for f in unsuccessful:
+        new_weight[f] = weight[f]-2
+except:
+    prophecy={}
 
-    if result_turn >= 0:
-        yo_high.youser(renv.get_env_or_default("notify_yo_username", ""))
-    elif result_turn < 0:
-        yo_low.youser(renv.get_env_or_default("notify_yo_username", ""))
 
+forecast = {"price":Forecast.ticker[renv.get_env_or_default("currency", "USD").lower()]}
+score = 0
+for key, value in functions_to_be_run.items():
+    forecast[key] = functions_to_be_run[key]()
+    score += forecast[key]*weight[key]
 
-escobar()
+if score > 0:
+    forecast["desicion"]=1
+    yo_high = yopy.Yo(renv.get_env_or_default("notify_high_yo_api_key", ""))
+elif score == 0:
+    forecast["desicion"]=0
+    yo_constant = yopy.Yo(renv.get_env_or_default("notify_constant_yo_api_key", ""))
+else:
+    forecast["desicion"]=-1
+    yo_fall = yopy.Yo(renv.get_env_or_default("notify_fall_yo_api_key", ""))
+
+utils.write_file(
+    'prophecy_' + renv.get_env_or_default("coin_name", "bitcoin") + '.json', forecast)
