@@ -1,4 +1,6 @@
 
+
+
 ![alt tag](https://d13yacurqjgara.cloudfront.net/users/322905/screenshots/2273155/pablo_v7.gif)
 
 # Escobar
@@ -11,24 +13,27 @@ Escobar is a crypto coin statics helper. It's purpose is determine the accuracy 
   - Escobar wise every time
   - Python 3.x
 
-# Environment
-Please set up your environment variables.
-
-    coin_name=bitcoin
-    currency=USD
-    notify_high_yo_api_key=<api_key>
-    notify_constant_yo_api_key=<api_key>
-    notify_fall_yo_api_key=<api_key>
-
 # How does it work
-Escobar assigns a value to each function. The sum of these values does not exceed 100. That is, each function has a percentage of accuracy. These values are recalculated according to the results they give. And escobar is more intelligent in every work. you can examine the JSON files it creates(exp: weight_bitcoin.json).
+Escobar assigns a value to each function. The sum of these values does not exceed 100. That is, each function has a percentage of accuracy. These values are recalculated according to the results they give. And escobar is more intelligent in every work. You can examine the JSON files it creates(exp: weight_bitcoin.json).
 
 You can run the escobar at any interval.
 
     python escobar.py
 
-# Write Your Own Functions
+# Environment
+Before install requirements.txt.
 
+    pip install requirements.txt
+
+Please set up your environment variables. Create .env file. Details: [real environment](https://github.com/cemkiy/python-shell-environment)
+
+        coin_name=bitcoin
+        currency=USD
+        notify_high_yo_api_key=<api_key>
+        notify_constant_yo_api_key=<api_key>
+        notify_fall_yo_api_key=<api_key>
+
+# Write Your Own Functions
  1. Write your own function to forecast.py. The functions can only return 0,1 or -1.
  0 is will be ignored. 1 is rises and -1 is falls . Example func:
  ```python
