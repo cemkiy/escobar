@@ -21,9 +21,9 @@ Please set up your environment variables.
     notify_fall_yo_api_key=<api_key>
 
 # How does it work
-Escobar assigns a value to each function. The sum of these values does not exceed 100. That is, each function has a percentage of accuracy. These values are recalculated according to the results they give. And escobar is more intelligent in every work.
+Escobar assigns a value to each function. The sum of these values does not exceed 100. That is, each function has a percentage of accuracy. These values are recalculated according to the results they give. And escobar is more intelligent in every work. you can examine the JSON files it creates(exp: weight_bitcoin.json).
 
-You can run the escort at any interval.
+You can run the escobar at any interval.
 
     python escobar.py
 
