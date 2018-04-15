@@ -1,12 +1,14 @@
 from coinmarketcap import Market
 from real_environment import real_environment
+import datetime
+
 
 class Forecast:
     def __init__(self):
         self.renv = real_environment.RealEnvironment()
         self.coinmarketcap = Market()
         self.ticker = self.coinmarketcap.ticker(self.renv.get_env_or_default("coin_name", "bitcoin"),
-            convert=self.renv.get_env_or_default("currency", "USD"))
+            convert=self.renv.get_env_or_default("currency", "USD"))[0]
         '''
         [
             {
@@ -30,10 +32,10 @@ class Forecast:
                 "market_cap_eur": "160984216216"
             }
         ]
-      '''
-          self.stats = coinmarketcap.stats(convert=self.renv.get_env_or_default("currency", "USD"))
-          '''
-          {
+        '''
+        self.stats = self.coinmarketcap.stats(convert=self.renv.get_env_or_default("currency", "USD"))
+        '''
+        {
             "total_market_cap_usd": 572724110011.0,
             "total_24h_volume_usd": 62123365544.0,
             "bitcoin_percentage_of_market_cap": 34.29,
@@ -43,13 +45,13 @@ class Forecast:
             "last_updated": 1516281565,
             "total_market_cap_eur": 468377213511.0,
             "total_24h_volume_eur": 50804861082.0
-         }
-         '''
+            }
+        '''
 
     def update(self):
          self.ticker = self.coinmarketcap.ticker(self.renv.get_env_or_default("coin_name", "bitcoin"),
              convert=self.renv.get_env_or_default("currency", "USD"))
-         self.stats = coinmarketcap.stats(convert=self.renv.get_env_or_default("currency", "USD"))
+         self.stats = self.coinmarketcap.stats(convert=self.renv.get_env_or_default("currency", "USD"))
 
     def trend_by_perc(self):
         score = 0
