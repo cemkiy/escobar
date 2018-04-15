@@ -18,12 +18,12 @@ Escobar assigns a value to each function. The sum of these values does not excee
 
 You can run the escobar at any interval.
 
-    python escobar.py
+    python3 escobar.py
 
 # Environment
 Before install requirements.txt.
 
-    pip install requirements.txt
+    pip3 install requirements.txt
 
 Please set up your environment variables. Create .env file. Details: [real environment](https://github.com/cemkiy/python-shell-environment)
 
